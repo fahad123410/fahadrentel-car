@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Fahad Premium Rentals | Luxury Car Hire Sri Lanka</title>
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bg-bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-bubbles li {
+            position: absolute;
+            list-style: none;
+            display: block;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            bottom: -160px;
+            animation: floatUp 22s infinite;
+            border-radius: 50%;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: translateY(-1200px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 14px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .navbar-brand {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD966, #E67E22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            color: #e2e8f0 !important;
+            font-weight: 500;
+            margin: 0 12px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: #FFD966 !important;
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            position: relative;
+            z-index: 10;
+            padding: 110px 0 50px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            margin-bottom: 35px;
+            transition: 0.3s;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 55px -12px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header-gradient {
+            background: linear-gradient(135deg, #1e2a3a, #0f212e);
+            padding: 22px 30px;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header-gradient::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 4s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+
+            100% {
+                transform: translateX(100%) rotate(45deg);
+            }
+        }
+
+        .card-header-gradient h3 {
+            color: #FFD966;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .hero-section {
+            background-size: cover;
+            background-position: center;
+            border-radius: 28px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero-overlay {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
+            padding: 50px;
+            border-radius: 28px;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #E67E22, #FFB347);
+            color: #1e2a3a;
+            border: none;
+            padding: 12px 32px;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: 0.3s;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(230, 126, 34, 0.3);
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(230, 126, 34, 0.5);
+            color: white;
+        }
+
+        .btn-outline-gold {
+            background: transparent;
+            border: 2px solid #E67E22;
+            color: #E67E22;
+            font-weight: 600;
+            padding: 10px 28px;
+            border-radius: 50px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-outline-gold:hover {
+            background: #E67E22;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .car-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+            transition: 0.35s;
+            cursor: pointer;
+            margin-bottom: 25px;
+        }
+
+        .car-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(230, 126, 34, 0.25);
+        }
+
+        .car-image {
+            height: 210px;
+            background: linear-gradient(145deg, #2c3e4e, #1e2f3a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFD966;
+            font-size: 52px;
+            overflow: hidden;
+        }
+
+        .car-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.4s;
+        }
+
+        .car-card:hover .car-image img {
+            transform: scale(1.08);
+        }
+
+        .car-price {
+            font-weight: 800;
+            font-size: 28px;
+            color: #E67E22;
+        }
+
+        .status-badge {
+            padding: 8px 22px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        .status-active {
+            background: #cce5ff;
+            color: #004085;
+            border-left: 4px solid #007bff;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 18px;
+            border: 2px solid #e2e8f0;
+            padding: 12px 18px;
+            transition: 0.2s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #E67E22;
+            box-shadow: 0 0 0 4px rgba(230, 126, 34, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .file-upload input[type="file"] {
+            padding: 14px;
+            background: #f8fafc;
+            border: 2px dashed #E67E22;
+            border-radius: 18px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #25D366;
+            color: white;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+            z-index: 1100;
+            transition: 0.3s;
+            cursor: pointer;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.08);
+            }
+        }
+
+        .tracking-number-large {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .bank-details-card {
+            background: linear-gradient(145deg, #fef9e6, #ffffff);
+            border-radius: 20px;
+            padding: 20px;
+            border-left: 5px solid #E67E22;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #ffe6cc;
+            border-top: 4px solid #E67E22;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        footer {
+            background: #0a0f1a;
+            color: #94a3b8;
+            padding: 35px 0 25px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 193, 7, 0.2);
+        }
+
+        @media (max-width: 768px) {
+
+            .col-md-4,
+            .col-md-6 {
+                width: 100%;
+            }
+
+            .tracking-number-large {
+                font-size: 32px;
+            }
+
+            .hero-overlay {
+                padding: 30px;
+            }
+        }
+
+        .feature-icon {
+            width: 55px;
+            height: 55px;
+            background: rgba(230, 126, 34, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-modern {
+            border-radius: 20px;
+            border: none;
+            padding: 16px 24px;
+        }
+
+        /* Firebase Security Rules Helper */
+        .rules-helper {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            max-width: 550px;
+            background: #1e293b;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            border-radius: 12px;
+            color: #f1f5f9;
+            z-index: 2000;
+            font-size: 13px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            display: none;
+        }
+
+        .rules-helper a {
+            color: #FFD966;
+        }
+
+        .rules-helper .close-helper {
+            float: right;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 18px;
+        }
+
+        .code-block {
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 11px;
+            overflow-x: auto;
+            font-family: monospace;
+            color: #86efac;
+            max-height: 250px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <ul class="bg-bubbles">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+
+    <!-- Firebase Rules Helper Box (will auto-show if permissions missing) -->
+    <div id="rulesHelper" class="rules-helper">
+        <button class="close-helper" onclick="document.getElementById('rulesHelper').style.display='none'">✕</button>
+        <i class="fas fa-shield-alt text-success"></i>
+        <strong>📜 Firebase Security Rules (Copy to Firestore & Storage)</strong><br>
+        <small>These rules allow public read for cars/banners, public create for bookings, and file uploads.</small>
+        <div class="code-block" id="rulesCodeBlock">
+            // FIRESTORE RULES v2<br>
+            rules_version = '2';<br>
+            service cloud.firestore {<br>
+            match /databases/{database}/documents {<br>
+            match /cars/{doc} { allow read: if true; allow write: if false; }<br>
+            match /banners/{doc} { allow read: if true; allow write: if false; }<br>
+            match /settings/{doc} { allow read: if true; allow write: if false; }<br>
+            match /bookings/{doc} {<br>
+            allow read: if true;<br>
+            allow create: if true;<br>
+            allow update: if
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['amount_paid','balance_due','payment_status','payment_proof_url','payment_method','status']);<br>
+            allow delete: if false;<br>
+            }<br>
+            }<br>
+            }<br>
+            // STORAGE RULES<br>
+            service firebase.storage {<br>
+            match /b/{bucket}/o {<br>
+            match /id_cards/{file} { allow read: if true; allow write: if request.auth == null; }<br>
+            match /licenses/{file} { allow read: if true; allow write: if request.auth == null; }<br>
+            match /payment_proofs/{file} { allow read: if true; allow write: if request.auth == null; }<br>
+            }<br>
+            }
+        </div>
+        <a href="https://console.firebase.google.com/project/rentel-77c74/firestore/rules" target="_blank"
+            class="btn btn-sm btn-success mt-2"><i class="fas fa-database"></i> Apply Firestore Rules</a>
+        <a href="https://console.firebase.google.com/project/rentel-77c74/storage/rules" target="_blank"
+            class="btn btn-sm btn-warning mt-2 ms-2"><i class="fas fa-cloud-upload-alt"></i> Apply Storage Rules</a>
+    </div>
+
+    <a href="https://wa.me/94756656862?text=Hello%20Fahad%20Premium%20Rentals%2C%20I%20need%20assistance"
+        target="_blank" class="whatsapp-float"><i class="fab fa-whatsapp"></i></a>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#" onclick="showHome()"><i class="fas fa-crown"></i> Fahad Premium Rentals</a>
+            <button class="navbar-toggler" type="button" onclick="toggleMenu()"><span
+                    class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showHome()"><i class="fas fa-home"></i>
+                            Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showTrackPage()"><i
+                                class="fas fa-search"></i> Track Booking</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="showAdminNote()"><i
+                                class="fas fa-shield-alt"></i> Admin</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="container" id="mainContent">
+            <!-- HOME PAGE -->
+            <div id="homePage">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <!-- Hero Section -->
+                        <div class="glass-card mb-4 hero-section" id="heroSection"
+                            style="background-image: url('https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80'); background-size: cover;">
+                            <div class="hero-overlay">
+                                <div class="row align-items-center">
+                                    <div class="col-md-7">
+                                        <h1 class="display-4 fw-bold text-white" id="heroTitle">Fahad Premium Rentals
+                                        </h1>
+                                        <p class="lead text-white-50" id="heroSubtitle">Luxury & Sports Car Rental in
+                                            Sri Lanka</p>
+                                        <div class="d-flex gap-3 my-4">
+                                            <div class="feature-icon bg-dark bg-opacity-50"><i
+                                                    class="fas fa-car-side fa-2x text-warning"></i></div>
+                                            <div class="feature-icon bg-dark bg-opacity-50"><i
+                                                    class="fas fa-shield-alt fa-2x text-warning"></i></div>
+                                            <div class="feature-icon bg-dark bg-opacity-50"><i
+                                                    class="fas fa-headset fa-2x text-warning"></i></div>
+                                        </div>
+                                        <div><button class="btn-gradient btn-lg me-3" onclick="scrollToBookingForm()"><i
+                                                    class="fas fa-calendar-check"></i> Reserve Now</button><a
+                                                href="https://wa.me/94756656862" target="_blank"
+                                                class="btn btn-success btn-lg"
+                                                style="background:#25D366; border-radius:50px;"><i
+                                                    class="fab fa-whatsapp"></i> WhatsApp</a></div>
+                                    </div>
+                                    <div class="col-md-5 text-center">
+                                        <div class="bg-warning bg-opacity-25 rounded-4 p-4 backdrop-blur-sm">
+                                            <h4 class="text-warning"><i class="fas fa-fire"></i> LIMITED OFFER</h4>
+                                            <div class="display-6 fw-bold text-white" id="kmOffer">FREE 350 KM</div>
+                                            <div class="h2 text-warning fw-bold" id="priceOffer">Rs. 12,900/-</div>
+                                            <small class="text-white">per day | limited period</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card">
+                            <div class="card-header-gradient">
+                                <h3><i class="fas fa-car"></i> Our Premium Fleet</h3>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row" id="carsContainer">
+                                    <div class="col-12 text-center">
+                                        <div class="loading-spinner"></div>
+                                        <p class="mt-2">Loading luxury vehicles...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card" id="bookingFormCard">
+                            <div class="card-header-gradient">
+                                <h3><i class="fas fa-file-signature"></i> Complete Booking</h3>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="alert alert-info alert-modern mb-3"><i class="fas fa-info-circle"></i>
+                                    <strong>Easy 3-Step:</strong> Fill details → Upload documents → Get tracking & pay
+                                    later
+                                </div>
+                                <form id="bookingForm">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3"><label class="fw-bold"><i class="fas fa-user"></i>
+                                                Full Name</label><input type="text" class="form-control" id="cust_name"
+                                                placeholder="Mohamed Fahad" required></div>
+                                        <div class="col-md-6 mb-3"><label class="fw-bold"><i
+                                                    class="fas fa-envelope"></i> Email</label><input type="email"
+                                                class="form-control" id="cust_email" placeholder="hello@example.com"
+                                                required></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3"><label class="fw-bold"><i
+                                                    class="fas fa-phone-alt"></i> Phone (Sri Lanka)</label><input
+                                                type="tel" class="form-control" id="cust_phone" placeholder="0771234567"
+                                                required></div>
+                                        <div class="col-md-6 mb-3"><label class="fw-bold"><i class="fas fa-car"></i>
+                                                Select Vehicle</label><select class="form-select" id="car_select"
+                                                required>
+                                                <option value="">-- Choose Your Dream Car --</option>
+                                            </select></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3"><label class="fw-bold">Pickup Date</label><input
+                                                type="date" class="form-control" id="pickup_date" required></div>
+                                        <div class="col-md-3 mb-3"><label class="fw-bold">Pickup Time</label><select
+                                                class="form-select" id="pickup_time">
+                                                <option>09:00</option>
+                                                <option>10:00</option>
+                                                <option>12:00</option>
+                                                <option>14:00</option>
+                                                <option>16:00</option>
+                                            </select></div>
+                                        <div class="col-md-3 mb-3"><label class="fw-bold">Return Date</label><input
+                                                type="date" class="form-control" id="return_date" required></div>
+                                        <div class="col-md-3 mb-3"><label class="fw-bold">Return Time</label><select
+                                                class="form-select" id="return_time">
+                                                <option>10:00</option>
+                                                <option>12:00</option>
+                                                <option>14:00</option>
+                                                <option>17:00</option>
+                                                <option>18:00</option>
+                                            </select></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3"><label class="fw-bold"><i class="fas fa-id-card"></i>
+                                                ID Card (Front)</label>
+                                            <div class="file-upload"><input type="file" class="form-control"
+                                                    id="id_front_file" accept="image/*,.pdf" required></div><small>JPG,
+                                                PNG, PDF</small>
+                                        </div>
+                                        <div class="col-md-4 mb-3"><label class="fw-bold"><i class="fas fa-id-card"></i>
+                                                ID Card (Back)</label>
+                                            <div class="file-upload"><input type="file" class="form-control"
+                                                    id="id_back_file" accept="image/*,.pdf" required></div>
+                                        </div>
+                                        <div class="col-md-4 mb-3"><label class="fw-bold"><i class="fas fa-license"></i>
+                                                Driving License</label>
+                                            <div class="file-upload"><input type="file" class="form-control"
+                                                    id="license_file" accept="image/*,.pdf" required></div>
+                                        </div>
+                                    </div>
+                                    <div id="priceSummaryBox" class="alert alert-warning alert-modern"
+                                        style="display:none;">
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                            <div><strong><i class="fas fa-calculator"></i> Rental
+                                                    Summary</strong><br><span id="selectedCarSpan"></span> | <span
+                                                    id="totalDaysSpan">0</span> day(s)</div>
+                                            <div class="text-end">
+                                                <h3 class="text-success mb-0" id="totalAmountSpan">Rs. 0</h3>
+                                                <small>incl. free km</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-4"><button type="button" class="btn-gradient px-5 py-2"
+                                            id="confirmBtn" disabled onclick="submitBookingProcess()"><i
+                                                class="fas fa-check-double"></i> Confirm & Proceed</button><button
+                                            type="button" class="btn-outline-gold ms-3" onclick="resetFormFields()"><i
+                                                class="fas fa-undo-alt"></i> Reset</button></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="trackPage" style="display:none;">
+                <div class="row justify-content-center">
+                    <div class="col-md-7">
+                        <div class="glass-card">
+                            <div class="card-header-gradient">
+                                <h3><i class="fas fa-qrcode"></i> Track Your Booking</h3>
+                            </div>
+                            <div class="card-body p-5 text-center"><input type="text"
+                                    class="form-control form-control-lg mb-3" id="trackInput"
+                                    placeholder="Enter Tracking Number (e.g., FR00012)"><button
+                                    class="btn-gradient w-100" onclick="searchBookingByTrack()"><i
+                                        class="fas fa-search"></i> Check Status</button>
+                                <hr><button class="btn-outline-gold" onclick="showHome()"><i
+                                        class="fas fa-arrow-left"></i> Back to Home</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="resultPage" style="display:none;">
+                <div class="row justify-content-center">
+                    <div class="col-md-9">
+                        <div class="glass-card" id="resultContainer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="paymentGatewayPage" style="display:none;">
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <div class="glass-card" id="paymentContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5 class="text-warning">Fahad Premium Rentals</h5>
+                    <p>Luxury car rental across Sri Lanka</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact</h5>
+                    <p><i class="fas fa-phone-alt"></i> +94 75 339 4996<br><i class="fab fa-whatsapp"></i> +94 75 665
+                        6862</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Follow Luxury</h5><i class="fab fa-instagram fa-2x me-3 text-warning"></i><i
+                        class="fab fa-facebook fa-2x text-warning"></i>
+                </div>
+            </div>
+            <hr class="bg-secondary">
+            <p>© 2025 Fahad Premium Rentals — Elite Driving Experience</p>
+        </div>
+    </footer>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMTJGyvrpX5jGTtAhGKZBOS8Lk3ulwcyQ",
+            authDomain: "rentel-77c74.firebaseapp.com",
+            projectId: "rentel-77c74",
+            storageBucket: "rentel-77c74.firebasestorage.app",
+            messagingSenderId: "916495900540",
+            appId: "1:916495900540:web:79e914e93dd8ae70bbfc31"
+        };
+
+        let db = null;
+        let storage = null;
+        let globalCars = [];
+        let firebaseInitialized = false;
+
+        function initFirebase() {
+            try {
+                const app = firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                storage = firebase.storage();
+                firebaseInitialized = true;
+                console.log("✅ Firebase ready");
+                return true;
+            } catch (e) {
+                console.error("Firebase init error:", e);
+                return false;
+            }
+        }
+
+        // Helper to show rules if needed
+        function maybeShowRulesHelper(errorMsg) {
+            if (errorMsg && (errorMsg.includes('permission') || errorMsg.includes('Missing'))) {
+                const helper = document.getElementById('rulesHelper');
+                if (helper) helper.style.display = 'block';
+                setTimeout(() => { if (helper) helper.style.opacity = '1'; }, 100);
+            }
+        }
+
+        function showHome() { hideAll(); document.getElementById('homePage').style.display = 'block'; loadCarsFromDB(); loadHeroAndBanner(); setMinDates(); }
+        function showTrackPage() { hideAll(); document.getElementById('trackPage').style.display = 'block'; }
+        function hideAll() { ['homePage', 'trackPage', 'resultPage', 'paymentGatewayPage'].forEach(id => { let el = document.getElementById(id); if (el) el.style.display = 'none'; }); }
+        function scrollToBookingForm() { document.getElementById('bookingFormCard').scrollIntoView({ behavior: 'smooth' }); }
+        function setMinDates() { let today = new Date().toISOString().split('T')[0]; let pickup = document.getElementById('pickup_date'); if (pickup) pickup.min = today; let ret = document.getElementById('return_date'); if (ret) ret.min = today; }
+        function toggleMenu() { document.getElementById('navbarNav').classList.toggle('show'); }
+        function resetFormFields() { document.getElementById('bookingForm').reset(); document.getElementById('priceSummaryBox').style.display = 'none'; document.getElementById('confirmBtn').disabled = true; setMinDates(); }
+        function showAdminNote() { alert("Admin Panel: Manage via Firebase Console. For security, admin operations are restricted to Firebase Console only."); }
+
+        async function loadCarsFromDB() {
+            if (!firebaseInitialized) initFirebase();
+            if (!db) { showDemoCars(); return; }
+            try {
+                const snapshot = await db.collection('cars').where('available', '==', true).get();
+                if (snapshot.empty) { showDemoCars(); return; }
+                globalCars = [];
+                snapshot.forEach(doc => globalCars.push({ id: doc.id, ...doc.data() }));
+                displayCarsGrid();
+                populateCarSelect();
+            } catch (e) {
+                console.error("Error loading cars:", e);
+                showDemoCars();
+                maybeShowRulesHelper(e.message);
+            }
+        }
+
+        function showDemoCars() {
+            globalCars = [
+                { name: "Toyota Fortuner", model: "2024", price_per_day: 15000, km_per_day: 150, transmission: "Auto", seats: 7, image_url: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400" },
+                { name: "BMW X5", model: "2023", price_per_day: 28000, km_per_day: 200, transmission: "Auto", seats: 5, image_url: "https://images.unsplash.com/photo-1556189250-72ba954cfc2b?w=400" },
+                { name: "Mercedes E-Class", model: "2024", price_per_day: 25000, km_per_day: 180, transmission: "Auto", seats: 5, image_url: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d6?w=400" },
+                { name: "Range Rover Sport", model: "2023", price_per_day: 38000, km_per_day: 200, transmission: "Auto", seats: 7, image_url: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400" },
+                { name: "Toyota Axio", model: "2022", price_per_day: 8000, km_per_day: 120, transmission: "Auto", seats: 5, image_url: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=400" }
+            ];
+            displayCarsGrid();
+            populateCarSelect();
+        }
+
+        function displayCarsGrid() {
+            const container = document.getElementById('carsContainer');
+            if (!container) return;
+            if (globalCars.length === 0) { container.innerHTML = '<div class="col-12 text-center"><h5>🚗 Premium cars arriving soon</h5></div>'; return; }
+            let html = '';
+            globalCars.forEach(car => {
+                const imgUrl = car.image_url || '';
+                html += `<div class="col-md-4 mb-4"><div class="car-card" onclick="quickSelectCar('${car.name} ${car.model}', ${car.price_per_day})"><div class="car-image">${imgUrl ? `<img src="${imgUrl}" alt="${car.name}">` : '<i class="fas fa-car-side fa-4x"></i>'}</div><div class="p-3"><h5>${car.name} ${car.model}</h5><p><i class="fas fa-cog"></i> ${car.transmission || 'Auto'} • ${car.seats || 5} Seats</p><div class="car-price">Rs. ${car.price_per_day.toLocaleString()}<small>/day</small></div><small class="text-muted"><i class="fas fa-road"></i> ${car.km_per_day || 150} km/day</small></div></div></div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function populateCarSelect() {
+            const select = document.getElementById('car_select');
+            if (!select) return;
+            select.innerHTML = '<option value="">-- Select Luxury Vehicle --</option>';
+            globalCars.forEach(c => {
+                select.innerHTML += `<option value="${c.name} ${c.model}" data-price="${c.price_per_day}" data-km="${c.km_per_day || 150}">${c.name} ${c.model} | Rs. ${c.price_per_day.toLocaleString()}/day</option>`;
+            });
+        }
+
+        function quickSelectCar(name, price) {
+            const sel = document.getElementById('car_select');
+            for (let opt of sel.options) if (opt.text.includes(name)) { opt.selected = true; break; }
+            calculatePricePreview();
+            scrollToBookingForm();
+        }
+
+        function calculatePricePreview() {
+            const pickup = document.getElementById('pickup_date').value;
+            const ret = document.getElementById('return_date').value;
+            const carSelect = document.getElementById('car_select');
+            if (!pickup || !ret || !carSelect.value) { document.getElementById('priceSummaryBox').style.display = 'none'; document.getElementById('confirmBtn').disabled = true; return; }
+            const start = new Date(pickup), end = new Date(ret);
+            if (end <= start) { document.getElementById('priceSummaryBox').style.display = 'none'; document.getElementById('confirmBtn').disabled = true; return; }
+            const days = Math.ceil((end - start) / 86400000);
+            const pricePer = parseFloat(carSelect.options[carSelect.selectedIndex]?.dataset.price) || 0;
+            const total = days * pricePer;
+            document.getElementById('selectedCarSpan').innerHTML = `<i class="fas fa-car"></i> ${carSelect.value}`;
+            document.getElementById('totalDaysSpan').innerText = days;
+            document.getElementById('totalAmountSpan').innerHTML = `Rs. ${total.toLocaleString()}/=`;
+            document.getElementById('priceSummaryBox').style.display = 'block';
+            document.getElementById('confirmBtn').disabled = false;
+        }
+
+        document.getElementById('pickup_date')?.addEventListener('change', calculatePricePreview);
+        document.getElementById('return_date')?.addEventListener('change', calculatePricePreview);
+        document.getElementById('car_select')?.addEventListener('change', calculatePricePreview);
+
+        async function generateTrackingNumber() {
+            if (!firebaseInitialized || !db) return 'FR' + Math.floor(Math.random() * 90000 + 10000);
+            try {
+                const last = await db.collection('bookings').orderBy('created_at', 'desc').limit(1).get();
+                let num = 0;
+                if (!last.empty) { let lastTrack = last.docs[0].data().tracking_number || ''; let n = parseInt(lastTrack.replace('FR', '')); if (!isNaN(n)) num = n; }
+                return 'FR' + (num + 1).toString().padStart(5, '0');
+            } catch (e) { return 'FR' + Math.floor(Math.random() * 90000 + 10000); }
+        }
+
+        async function uploadFileToStorage(file, folder, tracking, type) {
+            if (!file) return null;
+            if (!firebaseInitialized || !storage) return `https://via.placeholder.com/150?text=${type}_${tracking}`;
+            try {
+                const ext = file.name.split('.').pop();
+                const ref = storage.ref(`${folder}/${tracking}_${type}_${Date.now()}.${ext}`);
+                await ref.put(file);
+                return await ref.getDownloadURL();
+            } catch (e) {
+                console.warn("Storage upload fallback", e.message);
+                maybeShowRulesHelper(e.message);
+                return `https://via.placeholder.com/150?text=${type}_${tracking}`;
+            }
+        }
+
+        async function submitBookingProcess() {
+            const btn = document.getElementById('confirmBtn');
+            const original = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
+            btn.disabled = true;
+            try {
+                const name = document.getElementById('cust_name').value.trim();
+                const email = document.getElementById('cust_email').value.trim();
+                const phone = document.getElementById('cust_phone').value.trim();
+                const carModel = document.getElementById('car_select').value;
+                const pickupDate = document.getElementById('pickup_date').value;
+                const pickupTime = document.getElementById('pickup_time').value;
+                const returnDate = document.getElementById('return_date').value;
+                const returnTime = document.getElementById('return_time').value;
+                const idFront = document.getElementById('id_front_file').files[0];
+                const idBack = document.getElementById('id_back_file').files[0];
+                const license = document.getElementById('license_file').files[0];
+                if (!name || !email || !phone || !carModel || !pickupDate || !returnDate || !idFront || !idBack || !license) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Missing Details',
+                        text: 'Please complete all fields and upload documents.',
+                        confirmButtonColor: '#E67E22',
+                        background: '#1e293b',
+                        color: '#fff',
+                        iconColor: '#f87171'
+                    });
+                    btn.innerHTML = original; btn.disabled = false;
+                    return;
+                }
+
+                if (firebaseInitialized && db) {
+                    try {
+                        const snap = await db.collection('bookings')
+                            .where('car_model', '==', carModel)
+                            .where('status', 'in', ['pending', 'active'])
+                            .get();
+
+                        let isAvailable = true;
+                        snap.forEach(doc => {
+                            const b = doc.data();
+                            // Allow dropping off and picking up on the same day! (e.g. 26-27 and 27-28 are allowed)
+                            if (pickupDate === b.pickup_date && returnDate === b.return_date) {
+                                isAvailable = false; // Block exact same dates
+                            } else if (pickupDate < b.return_date && returnDate > b.pickup_date) {
+                                isAvailable = false; // Block strictly overlapping dates
+                            }
+                        });
+
+                        if (!isAvailable) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Date Not Available 📅',
+                                text: 'Sorry! This car is already booked on your selected dates. Please adjust your dates or choose another luxury vehicle.',
+                                confirmButtonColor: '#E67E22',
+                                background: '#1e293b',
+                                color: '#fff',
+                                iconColor: '#FFD966',
+                                backdrop: `rgba(15, 23, 42, 0.8)`
+                            });
+                            btn.innerHTML = original; btn.disabled = false;
+                            return;
+                        }
+                    } catch (err) {
+                        console.warn("Availability check err:", err);
+                    }
+                }
+
+                const selectedOpt = document.getElementById('car_select').options[document.getElementById('car_select').selectedIndex];
+                const pricePerDay = parseFloat(selectedOpt.dataset.price);
+                const days = Math.ceil((new Date(returnDate) - new Date(pickupDate)) / 86400000);
+                const totalPrice = days * pricePerDay;
+                const tracking = await generateTrackingNumber();
+
+                const idFrontUrl = await uploadFileToStorage(idFront, 'id_cards', tracking, 'front');
+                const idBackUrl = await uploadFileToStorage(idBack, 'id_cards', tracking, 'back');
+                const licenseUrl = await uploadFileToStorage(license, 'licenses', tracking, 'license');
+
+                const bookingObj = {
+                    tracking_number: tracking, customer_name: name, email, phone, car_model: carModel,
+                    car_price_per_day: pricePerDay, pickup_date: pickupDate, pickup_time: pickupTime,
+                    return_date: returnDate, return_time: returnTime, total_days: days, total_price: totalPrice,
+                    amount_paid: 0, balance_due: totalPrice, payment_status: 'pending', status: 'pending',
+                    id_front_url: idFrontUrl, id_back_url: idBackUrl, license_url: licenseUrl,
+                    created_at: new Date().toISOString()
+                };
+
+                let saveSuccess = false;
+                if (firebaseInitialized && db) {
+                    try {
+                        const docRef = await db.collection('bookings').add(bookingObj);
+                        bookingObj.id = docRef.id;
+                        saveSuccess = true;
+                    } catch (fbError) {
+                        console.error("Firebase save failed:", fbError.message);
+                        maybeShowRulesHelper(fbError.message);
+                    }
+                }
+
+                if (!saveSuccess) {
+                    let bookings = JSON.parse(localStorage.getItem('fahad_bookings') || '[]');
+                    bookingObj.id = 'local_' + Date.now();
+                    bookings.push(bookingObj);
+                    localStorage.setItem('fahad_bookings', JSON.stringify(bookings));
+                }
+
+                alert(`✅ Booking Created!\nTracking Number: ${tracking}\nTotal: Rs. ${totalPrice.toLocaleString()}/=\nPlease complete payment to confirm.`);
+
+                const now = new Date();
+                const formattedDate = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
+                const adminMsg = `I just made a booking with tracking number: *${tracking}*\nBooking Details:\n• Customer: ${name}\n• Car: ${carModel}\n• Total: Rs. ${totalPrice.toLocaleString()}/=\n• Paid: Rs. 0/=\n• Balance: Rs. ${totalPrice.toLocaleString()}/=\n• Pickup: ${pickupDate} at ${pickupTime}\n• Return: ${returnDate} at ${returnTime}\n• Booked at: ${formattedDate}\n\nPlease confirm my booking. Thank you!`;
+                window.open(`https://wa.me/94756656862?text=${encodeURIComponent(adminMsg)}`, '_blank');
+
+                showPaymentConfirmation(bookingObj);
+                resetFormFields();
+
+            } catch (err) {
+                alert('❌ Error: ' + err.message);
+                console.error(err);
+            } finally {
+                btn.innerHTML = original;
+                btn.disabled = false;
+            }
+        }
+
+        function showPaymentConfirmation(booking) {
+            hideAll();
+            document.getElementById('paymentGatewayPage').style.display = 'block';
+            const container = document.getElementById('paymentContainer');
+            const total = booking.total_price;
+            const balance = booking.balance_due;
+            container.innerHTML = `
+                <div class="card-header-gradient"><h3><i class="fas fa-check-circle text-success"></i> Booking: ${booking.tracking_number}</h3></div>
+                <div class="card-body p-4">
+                    <div class="alert alert-success text-center"><i class="fas fa-qrcode fa-2x"></i><h2 class="fw-bold tracking-number-large">${booking.tracking_number}</h2><p>Save this tracking number for status updates</p></div>
+                    <div class="row"><div class="col-md-6"><div class="p-3 bg-light rounded-4"><h5><i class="fas fa-car"></i> Rental Details</h5><p><strong>${booking.car_model}</strong><br>📅 ${booking.pickup_date} ${booking.pickup_time} → ${booking.return_date} ${booking.return_time}<br>📆 ${booking.total_days} days</p></div></div><div class="col-md-6"><div class="p-3 bg-light rounded-4"><h5><i class="fas fa-credit-card"></i> Summary</h5><p>Total: Rs. ${total.toLocaleString()}<br>Paid: Rs. 0<br><strong class="text-warning">Balance: Rs. ${balance.toLocaleString()}</strong><br><span class="badge bg-secondary">Pending Payment</span></p></div></div></div>
+                    <div class="bank-details-card mt-3"><h5><i class="fas fa-university"></i> Bank Transfer Details</h5><div class="row"><div class="col-md-6"><p><strong>Bank:</strong> Bank of Ceylon<br><strong>Account Name:</strong> Fahad Rental Service<br><strong>Account No:</strong> 123456789012<br><strong>Branch:</strong> Colombo 01</p></div><div class="col-md-6"><p><strong>Reference:</strong> Use tracking ${booking.tracking_number}<br><strong>Amount:</strong> Full or partial payment</p></div></div></div>
+                    <div class="card mt-4"><div class="card-header bg-info text-white"><h5><i class="fas fa-upload"></i> Upload Payment Proof</h5></div><div class="card-body"><div class="mb-3"><label>Amount Paying (Rs.)</label><input type="number" id="payAmount_${booking.tracking_number}" class="form-control" value="${balance}" min="1" max="${balance}"></div><div class="mb-3"><label>Payment Method</label><select id="payMethod_${booking.tracking_number}" class="form-select"><option>Bank Transfer</option><option>Cash Deposit</option></select></div><div class="mb-3"><label>Payment Slip / Screenshot</label><input type="file" id="proofFile_${booking.tracking_number}" class="form-control" accept="image/*,.pdf"></div><button class="btn-gradient w-100" onclick="uploadPaymentProofAndUpdate('${booking.tracking_number}', ${total}, ${balance}, '${booking.customer_name}', '${booking.car_model}', '${booking.pickup_date}', '${booking.pickup_time}', '${booking.return_date}', '${booking.return_time}')"><i class="fas fa-cloud-upload-alt"></i> Submit Payment</button></div></div>
+                    <div class="d-flex justify-content-between mt-4"><button class="btn-outline-gold" onclick="showHome()">Home</button><button class="btn-success" style="background:#25D366; border-radius:40px;" onclick="sendWhatsAppFullDetails('${booking.tracking_number}', '${booking.customer_name}', '${booking.car_model}', ${total}, 0, ${balance}, '${booking.pickup_date}', '${booking.pickup_time}', '${booking.return_date}', '${booking.return_time}')"><i class="fab fa-whatsapp"></i> WhatsApp Info</button></div>
+                </div>
+            `;
+        }
+
+        async function uploadPaymentProofAndUpdate(tracking, totalPrice, currentBalance, customerName, carModel, pickupDate, pickupTime, returnDate, returnTime) {
+            const amountEl = document.getElementById(`payAmount_${tracking}`);
+            const methodEl = document.getElementById(`payMethod_${tracking}`);
+            const fileEl = document.getElementById(`proofFile_${tracking}`);
+            if (!fileEl || !fileEl.files[0]) { alert('⚠️ Please select payment proof file.'); return; }
+            const payAmount = parseFloat(amountEl.value);
+            if (isNaN(payAmount) || payAmount < 1 || payAmount > currentBalance) { alert(`⚠️ Amount must be between 1 and ${currentBalance.toLocaleString()}`); return; }
+            try {
+                // Upload image
+                const proofUrl = await uploadFileToStorage(fileEl.files[0], 'payment_proofs', tracking, 'payment');
+
+                // Update Firestore
+                if (firebaseInitialized && db) {
+                    const snap = await db.collection('bookings').where('tracking_number', '==', tracking).limit(1).get();
+                    if (!snap.empty) {
+                        const docId = snap.docs[0].id;
+                        const oldData = snap.docs[0].data();
+                        const newAmountPaid = (oldData.amount_paid || 0) + payAmount;
+                        const updatedBalance = totalPrice - newAmountPaid;
+                        let statusText = updatedBalance <= 0 ? 'paid' : 'partial';
+
+                        await db.collection('bookings').doc(docId).update({
+                            amount_paid: newAmountPaid,
+                            balance_due: updatedBalance,
+                            payment_status: statusText,
+                            payment_proof_url: proofUrl,
+                            payment_method: methodEl.value
+                        });
+                    }
+                }
+
+                alert(`✅ Payment of Rs. ${payAmount.toLocaleString()} recorded! Admin will verify.`);
+                const now = new Date();
+                const formattedDate = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
+                const newBalance = currentBalance - payAmount;
+                const waMsg = `*PAYMENT SUBMITTED* 🚗\nTracking: ${tracking}\nAmount: Rs. ${payAmount.toLocaleString()}\nMethod: ${methodEl.value}\n\nI just made a booking with tracking number: *${tracking}*\nBooking Details:\n• Customer: ${customerName}\n• Car: ${carModel}\n• Total: Rs. ${totalPrice.toLocaleString()}/=\n• Paid: Rs. ${payAmount.toLocaleString()}/=\n• Balance: Rs. ${newBalance.toLocaleString()}/=\n• Pickup: ${pickupDate} at ${pickupTime}\n• Return: ${returnDate} at ${returnTime}\n• Booked at: ${formattedDate}\n\nPlease confirm my booking. Thank you!`;
+                window.open(`https://wa.me/94756656862?text=${encodeURIComponent(waMsg)}`, '_blank');
+                showHome();
+            } catch (err) { alert('Error: ' + err.message); }
+        }
+
+        function sendWhatsAppFullDetails(track, name, car, total, paid, balance, pickupDate, pickupTime, returnDate, returnTime) {
+            const now = new Date();
+            const formattedDate = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
+            const msg = `I just made a booking with tracking number: *${track}*\nBooking Details:\n• Customer: ${name}\n• Car: ${car}\n• Total: Rs. ${total.toLocaleString()}/=\n• Paid: Rs. ${paid.toLocaleString()}/=\n• Balance: Rs. ${balance.toLocaleString()}/=\n• Pickup: ${pickupDate} at ${pickupTime}\n• Return: ${returnDate} at ${returnTime}\n• Booked at: ${formattedDate}\n\nPlease confirm my booking. Thank you!`;
+            window.open(`https://wa.me/94756656862?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        async function searchBookingByTrack() {
+            const track = document.getElementById('trackInput').value.trim().toUpperCase();
+            if (!track) { alert('Enter tracking number'); return; }
+            let booking = null;
+            if (firebaseInitialized && db) {
+                try {
+                    const snap = await db.collection('bookings').where('tracking_number', '==', track).limit(1).get();
+                    if (!snap.empty) booking = { id: snap.docs[0].id, ...snap.docs[0].data() };
+                } catch (e) { console.warn("Firebase search failed", e); maybeShowRulesHelper(e.message); }
+            }
+            if (!booking) {
+                const bookings = JSON.parse(localStorage.getItem('fahad_bookings') || '[]');
+                booking = bookings.find(b => b.tracking_number === track);
+            }
+            if (!booking) { alert('❌ No booking found.'); return; }
+            hideAll();
+            document.getElementById('resultPage').style.display = 'block';
+            const resultDiv = document.getElementById('resultContainer');
+            let statusClass = booking.status === 'pending' ? 'status-pending' : (booking.status === 'active' ? 'status-active' : 'status-pending');
+            resultDiv.innerHTML = `
+                <div class="card-header-gradient"><h3><i class="fas fa-info-circle"></i> Booking: ${booking.tracking_number}</h3></div>
+                <div class="card-body p-4"><div class="text-center mb-3"><span class="status-badge ${statusClass}">${booking.status.toUpperCase()}</span></div>
+                <div class="alert alert-info text-center"><div class="tracking-number-large">${booking.tracking_number}</div></div>
+                <div class="row"><div class="col-md-6"><p><strong>👤 Name:</strong> ${booking.customer_name}</p><p><strong>📞 Phone:</strong> ${booking.phone}</p><p><strong>🚗 Car:</strong> ${booking.car_model}</p><p><strong>📅 Pickup:</strong> ${booking.pickup_date} ${booking.pickup_time}</p></div><div class="col-md-6"><p><strong>💰 Total:</strong> Rs. ${booking.total_price.toLocaleString()}</p><p><strong>💸 Paid:</strong> Rs. ${(booking.amount_paid || 0).toLocaleString()}</p><p><strong>⚖️ Balance:</strong> Rs. ${(booking.balance_due || 0).toLocaleString()}</p><p><strong>💳 Payment:</strong> ${(booking.payment_status || 'pending').toUpperCase()}</p></div></div>
+                <div class="text-center mt-4"><button class="btn-gradient" onclick="showHome()">Home</button><button class="btn-success ms-3" onclick="window.open('https://wa.me/94756656862?text=Hi%20Tracking%20${booking.tracking_number}','_blank')"><i class="fab fa-whatsapp"></i> Support</button></div></div>
+            `;
+        }
+
+        async function loadHeroAndBanner() {
+            if (!firebaseInitialized || !db) return;
+            try {
+                const heroDoc = await db.collection('settings').doc('hero').get();
+                if (heroDoc.exists) {
+                    if (heroDoc.data().title) document.getElementById('heroTitle').innerText = heroDoc.data().title;
+                    if (heroDoc.data().subtitle) document.getElementById('heroSubtitle').innerText = heroDoc.data().subtitle;
+                    if (heroDoc.data().background_image) document.getElementById('heroSection').style.backgroundImage = `url('${heroDoc.data().background_image}')`;
+                }
+                const bannerSnap = await db.collection('banners').where('is_active', '==', true).orderBy('created_at', 'desc').limit(1).get();
+                if (!bannerSnap.empty) { let b = bannerSnap.docs[0].data(); if (b.km_offer) document.getElementById('kmOffer').innerHTML = b.km_offer + ' KM'; if (b.price_offer) document.getElementById('priceOffer').innerHTML = b.price_offer; }
+            } catch (e) { maybeShowRulesHelper(e.message); }
+        }
+
+        window.onload = () => {
+            initFirebase();
+            showHome();
+            setMinDates();
+            // prefill rules helper display
+            setTimeout(() => { if (!firebaseInitialized) maybeShowRulesHelper("init"); }, 800);
+        };
+    </script>
+</body>
+
+</html>
