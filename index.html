@@ -1156,11 +1156,17 @@
             setMinDates();
             // prefill rules helper display
             setTimeout(() => { if (!firebaseInitialized) maybeShowRulesHelper("init"); }, 800);
-            // Prevent mobile/browser autofill showing old values
-            ['cust_name', 'cust_email', 'cust_phone'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = '';
-            });
+            // Prevent mobile/browser autofill showing old values.
+            // Some browsers re-apply autofill after page load, so we clear more than once.
+            const clearBookingFields = () => {
+                ['cust_name', 'cust_email', 'cust_phone'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+            };
+            clearBookingFields();
+            setTimeout(clearBookingFields, 300);
+            setTimeout(clearBookingFields, 1000);
         };
     </script>
 </body>
