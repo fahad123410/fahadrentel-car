@@ -97,6 +97,21 @@
             -webkit-text-fill-color: transparent;
         }
 
+        /* Mobile navbar hamburger (3 lines) visibility */
+        .navbar-toggler {
+            border-color: rgba(255, 217, 102, 0.9) !important;
+            z-index: 1001;
+        }
+        .navbar-toggler:focus {
+            box-shadow: none;
+            outline: none;
+        }
+        .navbar-toggler-icon {
+            width: 1.6em;
+            height: 1.6em;
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%23FFD966' stroke-width='3' stroke-linecap='round' d='M4 7h22'/%3E%3Cpath stroke='%23FFD966' stroke-width='3' stroke-linecap='round' d='M4 15h22'/%3E%3Cpath stroke='%23FFD966' stroke-width='3' stroke-linecap='round' d='M4 23h22'/%3E%3C/svg%3E") !important;
+        }
+
         .nav-link {
             color: #e2e8f0 !important;
             font-weight: 500;
@@ -610,20 +625,20 @@
                                 </div>
                                 <form id="bookingForm">
                                     <div class="row">
-                                        <div class="col-md-6 mb-3"><label class="fw-bold"><i class="fas fa-user"></i>
+                                        <div class="col-md-4 mb-3"><label class="fw-bold"><i class="fas fa-user"></i>
                                                 Full Name</label><input type="text" class="form-control" id="cust_name"
-                                                placeholder="Mohamed Fahad" required></div>
-                                        <div class="col-md-6 mb-3"><label class="fw-bold"><i
+                                                placeholder="" required></div>
+                                        <div class="col-md-4 mb-3"><label class="fw-bold"><i
                                                     class="fas fa-envelope"></i> Email</label><input type="email"
-                                                class="form-control" id="cust_email" placeholder="hello@example.com"
+                                                class="form-control" id="cust_email" placeholder=""
+                                                required></div>
+                                        <div class="col-md-4 mb-3"><label class="fw-bold"><i
+                                                    class="fas fa-phone-alt"></i> Mobile Number</label><input
+                                                type="tel" class="form-control" id="cust_phone" placeholder=""
                                                 required></div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-6 mb-3"><label class="fw-bold"><i
-                                                    class="fas fa-phone-alt"></i> Phone (Sri Lanka)</label><input
-                                                type="tel" class="form-control" id="cust_phone" placeholder="0771234567"
-                                                required></div>
-                                        <div class="col-md-6 mb-3"><label class="fw-bold"><i class="fas fa-car"></i>
+                                        <div class="col-md-12 mb-3"><label class="fw-bold"><i class="fas fa-car"></i>
                                                 Select Vehicle</label><select class="form-select" id="car_select"
                                                 required>
                                                 <option value="">-- Choose Your Dream Car --</option>
