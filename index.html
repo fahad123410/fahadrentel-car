@@ -423,6 +423,15 @@
             .hero-overlay {
                 padding: 30px;
             }
+
+            /* Center section titles on mobile (e.g., Track Your Booking) */
+            .card-header-gradient h3 {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                text-align: center;
+            }
         }
 
         .feature-icon {
@@ -809,14 +818,29 @@
             }
         }
 
-        function showHome() { hideAll(); document.getElementById('homePage').style.display = 'block'; loadCarsFromDB(); loadHeroAndBanner(); setMinDates(); }
-        function showTrackPage() { hideAll(); document.getElementById('trackPage').style.display = 'block'; }
+        function closeMenu() {
+            const nav = document.getElementById('navbarNav');
+            if (nav) nav.classList.remove('show');
+        }
+
+        function showHome() { closeMenu(); hideAll(); document.getElementById('homePage').style.display = 'block'; loadCarsFromDB(); loadHeroAndBanner(); setMinDates(); }
+        function showTrackPage() { closeMenu(); hideAll(); document.getElementById('trackPage').style.display = 'block'; }
         function hideAll() { ['homePage', 'trackPage', 'resultPage', 'paymentGatewayPage'].forEach(id => { let el = document.getElementById(id); if (el) el.style.display = 'none'; }); }
         function scrollToBookingForm() { document.getElementById('bookingFormCard').scrollIntoView({ behavior: 'smooth' }); }
         function setMinDates() { let today = new Date().toISOString().split('T')[0]; let pickup = document.getElementById('pickup_date'); if (pickup) pickup.min = today; let ret = document.getElementById('return_date'); if (ret) ret.min = today; }
         function toggleMenu() { document.getElementById('navbarNav').classList.toggle('show'); }
         function resetFormFields() { document.getElementById('bookingForm').reset(); document.getElementById('priceSummaryBox').style.display = 'none'; document.getElementById('confirmBtn').disabled = true; setMinDates(); }
-        function showAdminNote() { alert("Admin Panel: Manage via Firebase Console. For security, admin operations are restricted to Firebase Console only."); }
+        function showAdminNote() { closeMenu(); alert("Admin Panel: Manage via Firebase Console. For security, admin operations are restricted to Firebase Console only."); }
+
+        // Close navbar when tapping outside (mobile)
+        document.addEventListener('click', (e) => {
+            const nav = document.getElementById('navbarNav');
+            if (!nav || !nav.classList.contains('show')) return;
+            if (window.innerWidth >= 992) return;
+            const toggler = document.querySelector('.navbar-toggler');
+            if (nav.contains(e.target) || (toggler && toggler.contains(e.target))) return;
+            closeMenu();
+        });
 
         async function loadCarsFromDB() {
             if (!firebaseInitialized) initFirebase();
