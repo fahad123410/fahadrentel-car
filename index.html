@@ -1115,13 +1115,16 @@
                     <div class="alert alert-success text-center"><i class="fas fa-qrcode fa-2x"></i><h2 class="fw-bold tracking-number-large">${booking.tracking_number}</h2><p>Save this tracking number for status updates</p></div>
                     <div class="row"><div class="col-md-6"><div class="p-3 bg-light rounded-4"><h5><i class="fas fa-car"></i> Rental Details</h5><p><strong>${booking.car_model}</strong><br>📅 ${booking.pickup_date} ${booking.pickup_time} → ${booking.return_date} ${booking.return_time}<br>📆 ${booking.total_days} days</p></div></div><div class="col-md-6"><div class="p-3 bg-light rounded-4"><h5><i class="fas fa-credit-card"></i> Summary</h5><p>Total: Rs. ${total.toLocaleString()}<br>Paid: Rs. 0<br><strong class="text-warning">Balance: Rs. ${balance.toLocaleString()}</strong><br><span class="badge bg-secondary">Pending Payment</span></p></div></div></div>
                     <div class="bank-details-card mt-3"><h5><i class="fas fa-university"></i> Bank Transfer Details</h5><div class="row"><div class="col-md-6"><p><strong>Bank:</strong> Hattan National Bank<br><strong>Account Name:</strong> A S M Fahad<br><strong>Account No:</strong> 044010018709<br><strong>Branch:</strong> N/A</p></div><div class="col-md-6"><p><strong>Reference:</strong> Use tracking ${booking.tracking_number}<br><strong>Amount:</strong> Full or partial payment</p></div></div></div>
-                    <div class="card mt-4"><div class="card-header bg-info text-white"><h5><i class="fas fa-upload"></i> Upload Payment Proof</h5></div><div class="card-body"><div class="mb-3"><label>Amount Paying (Rs.)</label><input type="number" id="payAmount_${booking.tracking_number}" class="form-control" value="${balance}" min="1" max="${balance}"></div><div class="mb-3"><label>Payment Method</label><select id="payMethod_${booking.tracking_number}" class="form-select"><option>Bank Transfer</option><option>Cash Deposit</option></select></div><div class="mb-3"><label>Payment Slip / Screenshot</label><input type="file" id="proofFile_${booking.tracking_number}" class="form-control" accept="image/*,.pdf"></div><button class="btn-gradient w-100" onclick="uploadPaymentProofAndUpdate('${booking.tracking_number}', ${total}, ${balance}, '${booking.customer_name}', '${booking.car_model}', '${booking.pickup_date}', '${booking.pickup_time}', '${booking.return_date}', '${booking.return_time}')"><i class="fas fa-cloud-upload-alt"></i> Submit Payment</button></div></div>
+                    <div class="card mt-4"><div class="card-header bg-info text-white"><h5><i class="fas fa-upload"></i> Upload Payment Proof</h5></div><div class="card-body"><div class="mb-3"><label>Amount Paying (Rs.)</label><input type="number" id="payAmount_${booking.tracking_number}" class="form-control" value="${balance}" min="1" max="${balance}"></div><div class="mb-3"><label>Payment Method</label><select id="payMethod_${booking.tracking_number}" class="form-select"><option>Bank Transfer</option><option>Cash Deposit</option></select></div><div class="mb-3"><label>Payment Slip / Screenshot</label><input type="file" id="proofFile_${booking.tracking_number}" class="form-control" accept="image/*,.pdf"></div><button class="btn-gradient w-100" onclick="uploadPaymentProofAndUpdate(this, '${booking.tracking_number}', ${total}, ${balance}, '${booking.customer_name}', '${booking.car_model}', '${booking.pickup_date}', '${booking.pickup_time}', '${booking.return_date}', '${booking.return_time}')"><i class="fas fa-cloud-upload-alt"></i> Submit Payment</button></div></div>
                     <div class="d-flex justify-content-between mt-4"><button class="btn-outline-gold" onclick="showHome()">Home</button><button class="btn-success" style="background:#25D366; border-radius:40px;" onclick="sendWhatsAppFullDetails('${booking.tracking_number}', '${booking.customer_name}', '${booking.car_model}', ${total}, 0, ${balance}, '${booking.pickup_date}', '${booking.pickup_time}', '${booking.return_date}', '${booking.return_time}')"><i class="fab fa-whatsapp"></i> WhatsApp Info</button></div>
                 </div>
             `;
         }
 
-        async function uploadPaymentProofAndUpdate(tracking, totalPrice, currentBalance, customerName, carModel, pickupDate, pickupTime, returnDate, returnTime) {
+        const paymentSubmitInFlight = new Set();
+
+        async function uploadPaymentProofAndUpdate(btn, tracking, totalPrice, currentBalance, customerName, carModel, pickupDate, pickupTime, returnDate, returnTime) {
+            if (paymentSubmitInFlight.has(tracking)) return;
             const amountEl = document.getElementById(`payAmount_${tracking}`);
             const methodEl = document.getElementById(`payMethod_${tracking}`);
             const fileEl = document.getElementById(`proofFile_${tracking}`);
@@ -1129,6 +1132,12 @@
             const payAmount = parseFloat(amountEl.value);
             if (isNaN(payAmount) || payAmount < 1 || payAmount > currentBalance) { alert(`⚠️ Amount must be between 1 and ${currentBalance.toLocaleString()}`); return; }
             try {
+                paymentSubmitInFlight.add(tracking);
+                const originalHtml = btn?.innerHTML;
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting...`;
+                }
                 // Upload image
                 const proofUrl = await uploadFileToStorage(fileEl.files[0], 'payment_proofs', tracking, 'payment');
 
@@ -1167,7 +1176,16 @@
                     showConfirmButton: false
                 });
                 showHome();
-            } catch (err) { alert('Error: ' + err.message); }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                paymentSubmitInFlight.delete(tracking);
+                if (btn) {
+                    btn.disabled = false;
+                    // restore label (keep simple to avoid losing icon)
+                    btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Submit Payment`;
+                }
+            }
         }
 
         function sendWhatsAppFullDetails(track, name, car, total, paid, balance, pickupDate, pickupTime, returnDate, returnTime) {
