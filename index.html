@@ -852,6 +852,12 @@
         function toggleMenu() { document.getElementById('navbarNav').classList.toggle('show'); }
         function resetFormFields() { document.getElementById('bookingForm').reset(); document.getElementById('priceSummaryBox').style.display = 'none'; document.getElementById('confirmBtn').disabled = true; setMinDates(); }
         function showAdminNote() { closeMenu(); alert("Admin Panel: Manage via Firebase Console. For security, admin operations are restricted to Firebase Console only."); }
+        function openWhatsApp(message) {
+            const url = `https://wa.me/94756656862?text=${encodeURIComponent(message)}`;
+            const popup = window.open(url, '_blank');
+            // Fallback for strict mobile popup blockers
+            if (!popup) window.location.href = url;
+        }
 
         // Close navbar when tapping outside (mobile)
         document.addEventListener('click', (e) => {
@@ -1072,14 +1078,20 @@
                     localStorage.setItem('fahad_bookings', JSON.stringify(bookings));
                 }
 
-                alert(`✅ Booking Created!\nTracking Number: ${tracking}\nTotal: Rs. ${totalPrice.toLocaleString()}/=\nPlease complete payment to confirm.`);
-
                 const now = new Date();
                 const formattedDate = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
                 const adminMsg = `I just made a booking with tracking number: *${tracking}*\nBooking Details:\n• Customer: ${name}\n• Car: ${carModel}\n• Total: Rs. ${totalPrice.toLocaleString()}/=\n• Paid: Rs. 0/=\n• Balance: Rs. ${totalPrice.toLocaleString()}/=\n• Pickup: ${pickupDate} at ${pickupTime}\n• Return: ${returnDate} at ${returnTime}\n• Booked at: ${formattedDate}\n\nPlease confirm my booking. Thank you!`;
-                window.open(`https://wa.me/94756656862?text=${encodeURIComponent(adminMsg)}`, '_blank');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Booking Created',
+                    text: `Tracking: ${tracking} | Total: Rs. ${totalPrice.toLocaleString()}/=`,
+                    confirmButtonColor: '#E67E22',
+                    timer: 2200,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
 
-                showPaymentConfirmation(bookingObj);
+                openWhatsApp(adminMsg);
                 resetFormFields();
 
             } catch (err) {
@@ -1140,12 +1152,20 @@
                     }
                 }
 
-                alert(`✅ Payment of Rs. ${payAmount.toLocaleString()} recorded! Admin will verify.`);
                 const now = new Date();
                 const formattedDate = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
                 const newBalance = currentBalance - payAmount;
                 const waMsg = `*PAYMENT SUBMITTED* 🚗\nTracking: ${tracking}\nAmount: Rs. ${payAmount.toLocaleString()}\nMethod: ${methodEl.value}\n\nI just made a booking with tracking number: *${tracking}*\nBooking Details:\n• Customer: ${customerName}\n• Car: ${carModel}\n• Total: Rs. ${totalPrice.toLocaleString()}/=\n• Paid: Rs. ${payAmount.toLocaleString()}/=\n• Balance: Rs. ${newBalance.toLocaleString()}/=\n• Pickup: ${pickupDate} at ${pickupTime}\n• Return: ${returnDate} at ${returnTime}\n• Booked at: ${formattedDate}\n\nPlease confirm my booking. Thank you!`;
-                window.open(`https://wa.me/94756656862?text=${encodeURIComponent(waMsg)}`, '_blank');
+                openWhatsApp(waMsg);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Payment Submitted',
+                    text: `Rs. ${payAmount.toLocaleString()} sent for verification`,
+                    confirmButtonColor: '#E67E22',
+                    timer: 1800,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
                 showHome();
             } catch (err) { alert('Error: ' + err.message); }
         }
